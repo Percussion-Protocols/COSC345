@@ -35,7 +35,7 @@ jobs:
           openssl req -batch -verbose -x509 -newkey rsa -keyout ScreamCertificate.pvk -out ScreamCertificate.cer -nodes -extensions v3_req
           openssl pkcs12 -export -nodes -in ScreamCertificate.cer -inkey ScreamCertificate.pvk -out ScreamCertificate.pfx -passout pass:
       - name: Setup MSVC Dev Cmd
-        uses: ilammy/msvc-dev-cmd@1a763147372cb4ca09f2a6716ff70f2f4396bb8c
+        uses: ilammy/msvc-dev-cmd@v1.13.0
 
       - name: Sign and Install Scream Driver on Windows
         shell: powershell
