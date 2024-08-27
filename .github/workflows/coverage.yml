@@ -47,7 +47,6 @@ jobs:
         timeout-minutes: 5
         
       - name: Start Windows Audio Service
-        if: matrix.os == 'windows-latest'
         run: net start audiosrv
         shell: powershell
         
