@@ -26,7 +26,7 @@ jobs:
         id: run_msbuild
         run: msbuild /p:Configuration=Debug /p:Platform=x64 "drum machine\drum machine.sln"
       - name: Setup VSTest and add to PATH
-        uses: darenm/Setup-VSTest@d210f6977ad5423d59124585fa5a9c9bbfcfa70a #v1.1
+        uses: darenm/Setup-VSTest@v1
         id: setup_vstest
       - name: Setup OpenCppCoverage and add to PATh
         id: setup_opencppcoverage
