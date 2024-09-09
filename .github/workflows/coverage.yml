@@ -12,12 +12,12 @@ jobs:
     name: Build, Test , Upload Code Coverage Report
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@f25a3a9f25bd5f4c5d77189cab02ff357b5aedeb #v2
         with:
           fetch-depth: ‘2’
         id: checkout_code
       - name: Setup MSBuild and add to PATH
-        uses: microsoft/setup-msbuild@v1.0.2
+        uses: microsoft/setup-msbuild@c26a08ba26249b81327e26f6ef381897b6a8754d #1.0.2
         id: setup_msbuild
       - name: Restore NuGet packages
         #working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -26,7 +26,7 @@ jobs:
         id: run_msbuild
         run: msbuild /p:Configuration=Debug /p:Platform=x64 "drum machine\drum machine.sln"
       - name: Setup VSTest and add to PATH
-        uses: darenm/Setup-VSTest@v1
+        uses: darenm/Setup-VSTest@d210f6977ad5423d59124585fa5a9c9bbfcfa70a #v1.1
         id: setup_vstest
       - name: Setup OpenCppCoverage and add to PATh
         id: setup_opencppcoverage
@@ -62,7 +62,7 @@ jobs:
         run: OpenCppCoverage.exe --sources "drum machine\drum machine" --continue_after_cpp_exception --modules "drum machine" --export_type cobertura:DrumMachine.xml -- "vstest.console.exe" "drum machine\x64\Debug\UnitTesting.dll"
         continue-on-error: true
       - name: Upload Report to Codecov
-        uses: codecov/codecov-action@v1.3.2
+        uses: codecov/codecov-action@b349bb9c57ce40075f9b93b641ad1449d3aa12cb #1.3.2
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
