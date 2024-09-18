@@ -466,7 +466,9 @@ int Interface::_test() {
         Interface a;
         std::map<std::string, std::array<bool, 8>> sequence;
         a.addSound(1, sequence, E);
-        if (sequence.size() != 1 || sequence.find("Kick 70s 1.wav") == sequence.end()) {
+        a.addSound(2, sequence, E);
+        a.addSound(3, sequence, E);
+        if (sequence.size() != 3 || sequence.find("Kick 70s 1.wav") == sequence.begin()) {
             throw std::runtime_error("addSound did not add the expected sound.");
         }
     }
@@ -475,12 +477,13 @@ int Interface::_test() {
         return 3;
     }
 
-    // Test 4: setBPM (not using, as requires user input)
+    // Test 4: editSequence, then setBPM
     
     try {
         Interface a;
         std::map<std::string, std::array<bool, 8>> testSequence;
-        a.setBPM(testSequence, false);
+        a.performAction(49, testSequence, E);
+        a.performAction(50, testSequence, E);
     }
     catch (std::exception& e) {
         std::cout << "setBPM test failed. Details: " << e.what() << std::endl;

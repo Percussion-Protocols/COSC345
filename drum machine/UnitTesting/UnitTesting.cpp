@@ -14,7 +14,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 // Mock functions
 
 // Mock input for _getch
-int inputs[] = {0, 72, 80, 13, 0, 0, 0, 0, 0, 0, 0, 0, 32};
+int inputs[] = {0, 49, 97, 50, 13, 72, 80, 13, 0, 0, 0, 0, 0, 0, 0, 0, 32};
 int counter = -1;
 // Mock _getch() function
 int _getch() {
