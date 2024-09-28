@@ -27,8 +27,5 @@ bool Clock::interval() {
 		time = std::chrono::high_resolution_clock::now();
 		
 		return true;
-	}
-	else {
-		return false;
-	}
+	} else return false;
 }

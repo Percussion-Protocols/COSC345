@@ -50,22 +50,11 @@ public:
      *
      * \param id - the id to be unloaded
      */
-    void Unload(const std::string& id);
-    /**
-     * Plays a sound.
-     *
-     * \param id - the sound to play, shoudl be pre-loaded
-     */
     void PlaySound_(std::string id);
     /**
      * Test function for audio engine.
      *
      * \return
-     */
-    static int _test();
-    /**
-     * tells the audio engine to stop adding sounds to the queue and play them..
-     *
      */
     void tick();
 
@@ -98,18 +87,6 @@ private:
      */
     WaveData LoadWave(const std::string& filename);
 
-    /**
-     * @brief Mixes multiple sound events into one audio stream.
-     *
-     * This method takes a queue of sound events and sums their audio together
-     * before sending it to the wave output device. If there is only one sound,
-     * it is left unmodified.
-     *
-     * @param q The queue of sound events.
-     * @param sumHeader A pointer to the WAVEHDR structure to write the mixed data to.
-     */
-    static void mixData(HWAVEOUT hwaveout, std::vector<WAVEHDR>& q, WAVEHDR* sumHeader);
-
     void mixAudio(std::queue<WAVEHDR>& q, WAVEHDR* mixedHeader);
     /**
      * @brief Processes and sends sound events to be mixed.
@@ -119,12 +96,6 @@ private:
      * @param q The queue of sound events.
      */
     void Process_(std::queue<WAVEHDR>& q); //vector
-    /**
-     * Displays any errors when playing audio. for devs.
-     *
-     * \param error - the error code to interpret
-     */
-    void printWaveOutError(MMRESULT error);
 };
 
 #endif // AUDIO_ENGINE_H

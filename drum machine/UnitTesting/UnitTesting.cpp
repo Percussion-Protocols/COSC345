@@ -41,9 +41,19 @@ namespace UnitTesting
 		{
 			Audio_Engine E;
 			E.Preload("../Assets/Kick 70s 1.wav", "Kick");
+			try {
+				E.Preload("incorrect filename", "Fail");
+			} catch (const std::runtime_error err) {
+				std::cout << "Preload failed as expected (Invalid filename)" << std::endl;
+			}
+			try {
+				E.Preload("../../drum machine.sln", "Fail");
+			}
+			catch (const std::runtime_error err) {
+				std::cout << "Preload failed as expected (Missing RIFF header)" << std::endl;
+			}
 			E.PlaySound_("Kick");
 			E.tick();
-			Assert::AreEqual(0, Audio_Engine::_test());
 		}
 		TEST_METHOD(TestClock)
 		{
