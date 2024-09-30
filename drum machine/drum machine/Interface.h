@@ -66,14 +66,8 @@ public:
     static void drawPlayhead(int i, int size);
     static Audio_Engine* E;
     
-    /**
-     * @brief Getter for sequenceLength static variable   
-     * 
-     * \return sequenceLength static variable
-    */
-    static int getSequenceLength();
     /** 
-     * @brief Getter for sequenceLength static variable
+     * @brief Setter for sequenceLength static variable
      * Changing this value AFTER loading sounds may cause issues.
      *
      * \param length - new value for sequenceLength
@@ -82,12 +76,16 @@ public:
 
     /** 
      * @brief Go to the next page in the sequence view. 
+     * 
+     * \param sequence - Sequence
     */
-    static void nextPage();
+    static void nextPage(std::map<std::string, std::vector<bool>>& sequence);
     /**
      * @brief Go to the next page in the sequence view.
+     * 
+     * \param sequence - Sequence
     */
-    static void prevPage();
+    static void prevPage(std::map<std::string, std::vector<bool>>& sequence);
 
 private:
     static HANDLE hConsole;

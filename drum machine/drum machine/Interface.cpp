@@ -109,10 +109,6 @@ void Interface::showEditor(std::map<std::string, std::vector<bool>>& sequence, i
         drawLine({ (SHORT)(originX + 35), (SHORT)(originY + 1) }, l + 7, false, false);
     }
     else if (segment == 2) {//sequencer display
-        // Any time we draw the sequencer display, we should update the page counter
-        int offset = pageNum >= 9 ? 50 : 51;
-        printf("\x1b[" "%d;%dH", originX + 1, originY + offset);
-        printf("\x1b[93m Page:\x1b[0m %d/%d ", pageNum + 1, ((sequenceLength - 1) / 8) + 1);
         
         for (int j = 0; j < HEIGHT; j++) {
             for (int i = 0; i < WIDTH; i++) {
@@ -169,6 +165,11 @@ void Interface::showEditor(std::map<std::string, std::vector<bool>>& sequence, i
         printf("\x1b[93mBPM:\x1b[0m %d", BPM);
         drawLine({ 12,2 }, 2, false, true);
     }
+    else if (segment == 5) { // page
+        int offset = pageNum >= 9 ? 50 : 51;
+        printf("\x1b[" "%d;%dH", originX + 1, originY + offset);
+        printf("\x1b[93m Page:\x1b[0m %d/%d ", pageNum + 1, ((sequenceLength - 1) / 8) + 1);
+    }
         
    
 }
@@ -180,26 +181,23 @@ void Interface::drawPlayhead(int i, int size) {
     }
 }
 
-int Interface::getSequenceLength()
-{
-    return sequenceLength;
-}
-
 void Interface::setSequenceLength(int length)
 {
     sequenceLength = length;
 }
 
-void Interface::nextPage()
+void Interface::nextPage(std::map<std::string, std::vector<bool>>& sequence)
 {
     int numPages = ((sequenceLength - 1) / 8) + 1;
     pageNum = (pageNum + 1) % numPages;
+    showEditor(sequence, 5);
 }
 
-void Interface::prevPage()
+void Interface::prevPage(std::map<std::string, std::vector<bool>>& sequence)
 {
     int numPages = ((sequenceLength - 1) / 8) + 1;
     pageNum = (pageNum + (numPages-1)) % numPages;
+    showEditor(sequence, 5);
 }
 
 void Interface::selectSound(std::map<std::string, std::vector<bool>>& sequence) {
@@ -216,11 +214,11 @@ void Interface::selectSound(std::map<std::string, std::vector<bool>>& sequence) 
                 selection = (selection + 1 + sequence.size()) % sequence.size();
             }
             else if (ch == 'K') { // left arrow
-                prevPage();
+                prevPage(sequence);
                 showEditor(sequence, 2); //update sequence display
             }
             else if (ch == 'M') { // right arrow
-                nextPage();
+                nextPage(sequence);
                 showEditor(sequence, 2); //update sequence display
             }
             showEditor(sequence, 1); //update sound list display
@@ -275,8 +273,8 @@ void Interface::selectSound(std::map<std::string, std::vector<bool>>& sequence) 
             showEditor(sequence, 1); 
             showEditor(sequence, 2); 
             showEditor(sequence, 3); 
-
-            showEditor(sequence, 4); 
+            showEditor(sequence, 4);
+            showEditor(sequence, 5);
         }
         else if (ch == 's') { //pattern name
             printf("\x1b[" "%d;%dH", windowY / 3, windowX / 2);
@@ -314,16 +312,15 @@ void Interface::selectSound(std::map<std::string, std::vector<bool>>& sequence) 
             showEditor(sequence, 1); 
             showEditor(sequence, 2); 
             showEditor(sequence, 3); 
-
-            showEditor(sequence, 4); 
+            showEditor(sequence, 4);
+            showEditor(sequence, 5);
         }
         else if (ch == 'z') {
             refresh();
             printf("\x1b[" "0;0f");
             displayMainMenu(sequence);
             break;
-        }
-        else {
+        } else {
             int cmd = (int)(ch - '0');
             if (cmd >= 1 && cmd <= 8) {
                 int n = 0;
@@ -514,7 +511,7 @@ void Interface::playSequence(std::map<std::string, std::vector<bool>>& sequence)
             showEditor(sequence, 2);
             pIndex = (pIndex + 1) % (sequenceLength * 2);
 
-            if (pIndex % 16 == 0) nextPage();
+            if (pIndex % 16 == 0) nextPage(sequence);
         }
 
         if (c.interval()) {
@@ -568,6 +565,7 @@ int Interface::performAction(char choice, std::map<std::string, std::vector<bool
         showEditor(sequence, 2); //sequencer
         showEditor(sequence, 3); //status
         showEditor(sequence, 4); //bpm
+        showEditor(sequence, 5); // page counter
         //edit the sequence
         selectSound(sequence);
         break;
@@ -604,7 +602,7 @@ int Interface::performAction(char choice, std::map<std::string, std::vector<bool
         if (buf[0] != '\0') {
 
             int n = std::stoi(buf);
-            setSequenceLength(n <= 99 && n > 0 ? n * 8 : getSequenceLength());
+            setSequenceLength(n <= 99 && n > 0 ? n * 8 : sequenceLength);
         }
         refresh();
         displayMainMenu(sequence);
