@@ -21,10 +21,10 @@
 
 int main() {
 
-    const int N = 8;
-    std::map<std::string, std::array<bool, N>> sequence;
+    std::map<std::string, std::vector<bool>> sequence;
     Audio_Engine Eng = Audio_Engine::Audio_Engine();
     Interface::E = &Eng;
+    Interface::setSequenceLength(16);
     bool playing = false;
     int choice = 0;
     Interface::displayMainMenu(sequence);

@@ -25,6 +25,8 @@ CHAR_INFO* Interface::bSounds = new CHAR_INFO[S_WIDTH * S_HEIGHT];
 int Interface::windowX = 80;
 int Interface::windowY = 40;
 
+int Interface::sequenceLength = 8;
+
 SHORT Interface::originX = 2;
 SHORT Interface::originY = 4;
 
@@ -52,7 +54,7 @@ void Interface::refresh() {
 }
 
 
-void Interface::showEditor(std::map<std::string, std::array<bool, 8>>& sequence, int segment) {
+void Interface::showEditor(std::map<std::string, std::vector<bool>>& sequence, int segment) {
     if (segment == -1) {
         //window, status bar etc
         refresh();
@@ -98,7 +100,23 @@ void Interface::showEditor(std::map<std::string, std::array<bool, 8>>& sequence,
             }
 
             printf("\x1b[" "%dG", originY + 7);
-            printf("\x1b[" "3B"); 
+            printf("\x1b[" "3B");
+
+            // Print any extras, if sequence length is > 8
+            for (int j = 0; j < (i->second.size() - 1) / 8; j++) {
+                s = "...";
+                l++;
+                if (l == selection) {
+                    printf("\x1b[90m%d\x1b[0m  \x1b[107;30m%s\x1b[0;97m", l + 1, s.c_str());
+                }
+                else {
+                    printf("\x1b[90m%d\x1b[0m  %s", l + 1, s.c_str());
+                }
+
+                printf("\x1b[" "%dG", originY + 7);
+                printf("\x1b[" "3B");
+            }
+
             l++;
 
         }
@@ -128,15 +146,15 @@ void Interface::showEditor(std::map<std::string, std::array<bool, 8>>& sequence,
         for (const auto& s : sequence) {
 
             for (int j = 0; j < s.second.size(); j++) {
-
+                if (j == 8) i++;
 
                 x = (i * (WIDTH * 3) - WIDTH);
-                y = (1 + j * 4) + (j >= 4 ? 2 : 0);
+                y = (1 + (j % 8) * 4) + ((j % 8) >= 4 ? 2 : 0);
                 
                 drawCell(x, y, s.second.at(j));
                 if (status) {
 
-                    drawPlayhead(pIndex, sequence.size());
+                    drawPlayhead(pIndex % 16, sequence.size());
                 }
                 
             }
@@ -174,19 +192,30 @@ void Interface::drawPlayhead(int i, int size) {
     }
 }
 
-void Interface::selectSound(std::map<std::string, std::array<bool, 8>>& sequence) {
+int Interface::getSequenceLength()
+{
+    return sequenceLength;
+}
+
+void Interface::setSequenceLength(int length)
+{
+    sequenceLength = length;
+}
+
+void Interface::selectSound(std::map<std::string, std::vector<bool>>& sequence) {
     
 
     while (true) {
         char ch = _getch();
         if (ch == -32) {  
             ch = _getch();  
+            int numOfRows = (sequence.size() * (((sequenceLength - 1) / 8) + 1));
             if (ch == 72) { 
-                selection = (selection - 1 + sequence.size()) % sequence.size();
+                selection = (selection - 1 + numOfRows) % numOfRows;
                 
             }
             else if (ch == 80) { 
-                selection = (selection + 1 + sequence.size()) % sequence.size();
+                selection = (selection + 1 + numOfRows) % numOfRows;
                 
             }
             showEditor(sequence, 1); //update sound list display
@@ -290,29 +319,22 @@ void Interface::selectSound(std::map<std::string, std::array<bool, 8>>& sequence
             break;
         }
         else {
-
-            
-
             int cmd = (int)(ch - '0');
             if (cmd >= 1 && cmd <= 8) {
-                
                 int n = 0;
+                int rowsPerSound = ((sequenceLength - 1) / 8) + 1;
                 for (auto& i : sequence) {
-                    if (n == selection) {
-                        i.second[cmd-1] = !i.second[cmd-1];
-                        break;
+                    if (n > selection) break;
+                    for (int j = 0; j < rowsPerSound; j++) {
+                        if (n == selection) {
+                            i.second[(8 * j) + cmd - 1] = !i.second[(8 * j) + cmd - 1];
+                        }
+                        n++;
                     }
-                    n++;
                 }
-                
             }
             showEditor(sequence, 2); //update sequence data
-            
         }
-        
-        
-        
-        
     }
     
 }
@@ -414,7 +436,7 @@ void Interface::drawLine(COORD pos, int length, bool horizontal, bool ends) {
 * @param sequence The currrent sequence, the string is the name of the sound, and the array is the pattern
 * @return void
 */
-void Interface::displayMainMenu(const std::map<std::string, std::array<bool, 8>>& sequence) {
+void Interface::displayMainMenu(const std::map<std::string, std::vector<bool>>& sequence) {
     
     
     std::cout << "\x1b[92mWelcome to CMDrum\x1b[97m \x1b[90m- Command Line Drum Machine\x1b[97m\n";
@@ -433,18 +455,27 @@ void Interface::displayMainMenu(const std::map<std::string, std::array<bool, 8>>
 * @param sequence; the currrent sequence, the string is the name of the sound, and the array is the pattern
 * @return void
 */
-void Interface::addSound(int newSound, std::map<std::string, std::array<bool, 8>>& sequence) {
+void Interface::addSound(int newSound, std::map<std::string, std::vector<bool>>& sequence) {
     switch (newSound) {
     case 1:
-        sequence.insert(std::make_pair("Kick 70s 1.wav", std::array<bool, 8>{false, false, false, false, false, false, false, false}));
+        sequence.insert(std::make_pair("Kick 70s 1.wav", std::vector<bool>{}));
+        for (int i = 0; i < sequenceLength; i++) {
+            sequence["Kick 70s 1.wav"].push_back(false);
+        }
         E->Preload("../Assets/Kick 70s 1.wav", "Kick 70s 1.wav");
         break;
     case 2:
-        sequence.insert(std::make_pair("Snare 70s MPC 3.wav", std::array<bool, 8>{false, false, false, false, false, false, false, false}));
+        sequence.insert(std::make_pair("Snare 70s MPC 3.wav", std::vector<bool>{}));
+        for (int i = 0; i < sequenceLength; i++) {
+            sequence["Snare 70s MPC 3.wav"].push_back(false);
+        }
         E->Preload("../Assets/Snare 70s MPC 3.wav", "Snare 70s MPC 3.wav");
         break;
     case 3:
-        sequence.insert(std::make_pair("Hihat Closed 80s UK Disco Vinyl.wav", std::array<bool, 8>{false, false, false, false, false, false, false, false}));
+        sequence.insert(std::make_pair("Hihat Closed 80s UK Disco Vinyl.wav", std::vector<bool>{}));
+        for (int i = 0; i < sequenceLength; i++) {
+            sequence["Hihat Closed 80s UK Disco Vinyl.wav"].push_back(false);
+        }
         E->Preload("../Assets/Hihat Closed 80s UK Disco Vinyl.wav", "Hihat Closed 80s UK Disco Vinyl.wav");
         break;
     }
@@ -456,11 +487,11 @@ void Interface::addSound(int newSound, std::map<std::string, std::array<bool, 8>
 * @param[in] sequence the sequence we will be playing
 * @returns int just zero, as this function does not return anyth
 */
-void Interface::playSequence(std::map<std::string, std::array<bool, 8>>& sequence) {   
+void Interface::playSequence(std::map<std::string, std::vector<bool>>& sequence) {   
     Clock c = Clock::Clock(BPM);
     Clock display(BPM * 2);
     std::vector<std::string> names;
-    std::vector<std::array<bool, 8>> patterns;
+    std::vector<std::vector<bool>> patterns;
     for (auto i = sequence.begin(); i != sequence.end(); i++) {
          
          names.push_back(i->first);
@@ -477,7 +508,7 @@ void Interface::playSequence(std::map<std::string, std::array<bool, 8>>& sequenc
     while (running) {
         if (display.interval()) {
             showEditor(sequence, 2);
-            pIndex = (pIndex + 1) % (16);
+            pIndex = (pIndex + 1) % (sequenceLength * 2);
         }
         if (c.interval()) {
             
@@ -495,7 +526,7 @@ void Interface::playSequence(std::map<std::string, std::array<bool, 8>>& sequenc
             
         }
         
-        if (index > 7) {
+        if (index > sequenceLength-1) {
             index = 0;
         }
             if (_kbhit()) {
@@ -520,7 +551,7 @@ void Interface::playSequence(std::map<std::string, std::array<bool, 8>>& sequenc
 * @param[in] E, the audio engine we will use to play sounds
 * @return int, -1 if we should close the program, 0 otherwise
 */
-int Interface::performAction(char choice, std::map<std::string, std::array<bool, 8>>& sequence) {
+int Interface::performAction(char choice, std::map<std::string, std::vector<bool>>& sequence) {
     bool exit = false;
     switch (choice) {
     case '\r': { //1
