@@ -78,6 +78,9 @@ public:
     */
     static void setSequenceLength(int length);
 
+    static void nextPage();
+    static void prevPage();
+
 private:
     static HANDLE hConsole;
     static CHAR_INFO* screen; /// sequencer canvas
@@ -103,7 +106,8 @@ private:
 
     static bool exit_;
 
-    static int sequenceLength;
+    static int sequenceLength; /// Number of beats in the sequence
+    static int pageNum; /// Current page
 };
 
 #endif // INTERFACE_H
