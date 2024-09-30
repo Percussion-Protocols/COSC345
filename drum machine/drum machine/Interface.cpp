@@ -12,7 +12,7 @@
 
 // Declarations of a few strings which will be used multiple times \x1b[90m- Command Line Drum Machine\x1b[97m 93
 
-std::string mainMenu = "\n\x1b[90m'Enter' \x1b[93mView Editor\x1b[97m\n\x1b[90m  'Z' \x1b[93m  Exit\x1b[97m";
+std::string mainMenu = "\n\x1b[90m'Enter' \x1b[93mView Editor\x1b[97m\n\x1b[90m  'P' \x1b[93m  Choose Number of Pages\n\x1b[90m  'Z' \x1b[93m  Exit\x1b[97m";
 int BPM = 160;
 bool sequenceSet = false;
 std::string patternName = "New Pattern";
@@ -109,7 +109,10 @@ void Interface::showEditor(std::map<std::string, std::vector<bool>>& sequence, i
         drawLine({ (SHORT)(originX + 35), (SHORT)(originY + 1) }, l + 7, false, false);
     }
     else if (segment == 2) {//sequencer display
-
+        // Any time we draw the sequencer display, we should update the page counter
+        int offset = pageNum >= 9 ? 50 : 51;
+        printf("\x1b[" "%d;%dH", originX + 1, originY + offset);
+        printf("\x1b[93m Page:\x1b[0m %d/%d ", pageNum + 1, ((sequenceLength - 1) / 8) + 1);
         
         for (int j = 0; j < HEIGHT; j++) {
             for (int i = 0; i < WIDTH; i++) {
@@ -569,7 +572,44 @@ int Interface::performAction(char choice, std::map<std::string, std::vector<bool
         selectSound(sequence);
         break;
     }
-    
+    case 'p': {
+        printf("\x1b[" "%d;%dH", windowY / 3, windowX / 2);
+        printf("Number of Pages (default 1, max 99): ");
+
+        char buf[4];
+        std::fill(buf, buf + 4, '\0');
+        int c = 0;
+        bool confirm = false;
+        while (!confirm) {
+            char ch_ = _getch();
+            if (c <= 1) {
+
+                if (ch_ == '\r') break;
+                if (std::isdigit(ch_)) {
+
+                    printf("%c", ch_);
+                    buf[c] = ch_;
+                    c++;
+                }
+            }
+            if (ch_ == '\r') break;
+            if (ch_ == 8 && c >= 1) {
+                c--;
+                buf[c] = '\0';
+                printf("\x1b[" "1D");
+                printf("\x1b[" "1X");
+            }
+
+        }
+        if (buf[0] != '\0') {
+
+            int n = std::stoi(buf);
+            setSequenceLength(n <= 99 && n > 0 ? n * 8 : getSequenceLength());
+        }
+        refresh();
+        displayMainMenu(sequence);
+        break;
+    }
     case 'z': { //leave
         refresh();
         std::cout << "\x1b[92mHave a good day.\x1b[97m";

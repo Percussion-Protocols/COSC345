@@ -24,7 +24,7 @@ int main() {
     std::map<std::string, std::vector<bool>> sequence;
     Audio_Engine Eng = Audio_Engine::Audio_Engine();
     Interface::E = &Eng;
-    Interface::setSequenceLength(32);
+    Interface::setSequenceLength(8);
     bool playing = false;
     int choice = 0;
     Interface::displayMainMenu(sequence);
