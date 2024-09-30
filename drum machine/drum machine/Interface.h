@@ -67,18 +67,26 @@ public:
     static Audio_Engine* E;
     
     /**
-     * Getter for sequenceLength static variable   
+     * @brief Getter for sequenceLength static variable   
      * 
      * \return sequenceLength static variable
     */
     static int getSequenceLength();
-    /** Getter for sequenceLength static variable
+    /** 
+     * @brief Getter for sequenceLength static variable
+     * Changing this value AFTER loading sounds may cause issues.
      *
      * \param length - new value for sequenceLength
     */
     static void setSequenceLength(int length);
 
+    /** 
+     * @brief Go to the next page in the sequence view. 
+    */
     static void nextPage();
+    /**
+     * @brief Go to the next page in the sequence view.
+    */
     static void prevPage();
 
 private:

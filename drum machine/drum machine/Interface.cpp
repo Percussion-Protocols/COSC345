@@ -206,14 +206,11 @@ void Interface::selectSound(std::map<std::string, std::vector<bool>>& sequence) 
         char ch = _getch();
         if (ch == -32) {  
             ch = _getch();  
-            int numOfRows = (sequence.size() * (((sequenceLength - 1) / 8) + 1));
             if (ch == 72) { 
-                selection = (selection - 1 + numOfRows) % numOfRows;
-                
+                selection = (selection - 1 + sequence.size()) % sequence.size();
             }
             else if (ch == 80) { 
-                selection = (selection + 1 + numOfRows) % numOfRows;
-                
+                selection = (selection + 1 + sequence.size()) % sequence.size();
             }
             else if (ch == 'K') { // left arrow
                 prevPage();
