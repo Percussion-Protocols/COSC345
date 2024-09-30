@@ -71,7 +71,7 @@ namespace UnitTesting
 		{
 			Audio_Engine Eng = Audio_Engine::Audio_Engine();
 			Interface::E = &Eng;
-			std::map<std::string, std::array<bool, 8>> testSequence;
+			std::map<std::string, std::vector<bool>> testSequence;
 			Interface::performAction('\r', testSequence);
 			Interface::performAction('z', testSequence);
 			Interface::performAction('a', testSequence);
