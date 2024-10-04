@@ -15,6 +15,7 @@ You may need to clear the cache in your browser to see most recent changes.
 
 # How to use
 
+'Enter to view editor
 Once in the editor, 
 - a - set bpm
 - s - set pattern name
