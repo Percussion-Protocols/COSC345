@@ -45,7 +45,7 @@ namespace UnitTesting
 		{
 			Audio_Engine E;
 			E.Preload("../Assets/Kick 70s 1.wav", "Kick");
-			E.Preload("../Assets/Cash Register.wav", "Cash");
+			E.Preload("../Assets/Snare 70s MPC 3.wav", "Snare");
 			try {
 				E.Preload("incorrect filename", "Fail");
 			} catch (const std::runtime_error err) {
@@ -58,10 +58,10 @@ namespace UnitTesting
 				std::cout << "Preload failed as expected (Missing RIFF header)" << std::endl;
 			}
 			E.PlaySound_("Kick");
-			E.PlaySound_("Cash");
+			E.PlaySound_("Snare");
 			E.Preview("../Assets/Kick 70s 1.wav");
 			E.tick();	
-			E.Unload("Cash");
+			E.Unload("Snare");
 		}
 		TEST_METHOD(TestClock)
 		{
