@@ -9,11 +9,7 @@
 ## Introduction
 This manual provides a comprehensive guide to using the beat-making command-line software. Whether you're a beginner or an experienced user, this manual will help you get started and explore all the features available.
 
-## Getting Started
-In this section, we'll walk through the installation process and the basic commands needed to start creating beats. You’ll learn how to:
-- Install the software on your system.
-- Set up your workspace and configure necessary paths.
-- Run your first beat-making command.
+
 
 ## Navigating the Software
 
