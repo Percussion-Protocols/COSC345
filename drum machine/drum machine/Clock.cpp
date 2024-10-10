@@ -43,8 +43,8 @@ bool Clock::interval() {
 	if ((elapsed+0) >= (tempo_ms+msOffset)) {
 		time = std::chrono::high_resolution_clock::now();
 		second = !second;
-		uint64_t mult = tempo_ms / 85;
-		uint64_t ms = ((swing - 50))*mult; 
+		int64_t mult = tempo_ms / 85;
+		int64_t ms = ((swing - 50))*mult; 
 		msOffset = (second ? (ms) : ( - 1 * ms));
 		return true;
 	} else return false;

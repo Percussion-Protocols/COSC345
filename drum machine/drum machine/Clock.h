@@ -70,11 +70,11 @@ public:
 private:
 	
 	std::chrono::high_resolution_clock::time_point time; ///<the time measured from the system
-	uint64_t tempo_ms; ///< tempo converted into equivalent milliseconds
+	int64_t tempo_ms; ///< tempo converted into equivalent milliseconds
 	static int64_t swing;
 
-	uint64_t msOffset = 0;
-	uint64_t msOffset_d = 0;
+	int64_t msOffset = 0;
+	int64_t msOffset_d = 0;
 };
 #endif
 
