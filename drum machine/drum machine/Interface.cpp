@@ -372,6 +372,7 @@ void Interface::drawPlayhead(int i, int size) {
 void Interface::setSequenceLength(int length, std::map<std::string, std::vector<bool>>& sequence)
 {
     sequenceLength = length;
+    pageNum = 0;
     for (auto i = sequence.begin(); i != sequence.end(); i++) {
         i->second.resize(length, false);
         i->second.shrink_to_fit();
