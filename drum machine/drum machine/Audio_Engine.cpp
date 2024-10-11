@@ -79,7 +79,7 @@ Audio_Engine::~Audio_Engine() { //needs tests is headers deallocate successfully
                 waveOutUnprepareHeader(hWaveOut, &header, sizeof(WAVEHDR));
             }
             if (header.lpData) {
-                delete[] header.lpData;
+                // delete[] header.lpData;
                 header.lpData = nullptr;
             }
 
